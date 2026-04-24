@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Student Helper</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Poppins:wght@400;600&display=swap"
+        rel="stylesheet">
     <style>
         /* dark theme looked cooler so i went with this */
-        body {
-            background-color: #1a1a2e;
+        body { 
+             background-color: #1a1a2e;
             font-family: 'Poppins', sans-serif;
             padding: 20px;
             color: #eee;
@@ -114,72 +115,63 @@
 </head>
 
 <body>
-
     <h1>📖 My Student Helper</h1>
     <p class="subtitle">a small tool i made to track my study stuff</p>
-
     <!-- wrap everything so calendar can go on the side, finally learned flexbox lol -->
     <div style="display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; margin: 0 auto;">
-        
+
         <!-- left side stuff -->
         <div style="flex: 2; min-width: 300px;">
+            <!-- changed this to a pomodoro timer instead of just 1 hour -->
+            <div class="timer-bar" id="pomoBg">
+                <div id="pomoLabel">🍅 Focus Time!</div>
+                <div id="timerText" style="font-size: 26px; font-weight: bold; margin: 5px 0;">25:00</div>
+                <button id="pomoBtn" onclick="startTimer()"
+                    style="background-color: #1a1a2e; margin-top: 5px; width: 180px;">Start Pomodoro</button>
+            </div>
+            <div class="box">
+                <h2>👤 My Profile</h2>
+                <label>What class are you in?</label>
+                <select id="myClass" onchange="changeClass()">
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                </select>
+                <p id="welcomeMsg">Welcome, Student of Class 9!</p>
+            </div>
+            <div class="box">
+                <h2>📅 1h 30m Study Plan</h2>
+                <p style="font-size: 13px; color: #888; margin-top: -10px;">my rough time table for subjects &
+                    assignments</p>
+                <div class="backlog-item" style="border-left-color: #53d769;">
+                    <b>First 30 mins:</b> Hard Subject (Math/Science)
+                </div>
+                <div class="backlog-item" style="border-left-color: #fca311;">
+                    <b>Next 30 mins:</b> Pending Assignments
+                </div>
+                <div class="backlog-item" style="border-left-color: #e94560;">
+                    <b>Last 30 mins:</b> Easy Subject / Revision
+                </div>
+                <div style="font-size: 12px; color: #ccc; margin-top: 10px; font-style: italic;">
+                    * tbh i rarely stick to this perfectly lol
+                </div>
+            </div>
+            <div class="box">
+                <h2>📚 My Backlogs</h2>
+                <input type="text" id="taskInput" placeholder="What did you miss? (e.g. Science Ch 3)">
+                <button onclick="addTask()">Add to List</button>
+                <div id="taskList"></div>
+                <p id="taskSaved" class="saved-msg"></p>
+            </div>
+            <div class="box">
+                <h2>✍️ Daily Journal</h2>
+                <textarea id="journalInput" rows="3" placeholder="How was your day?"></textarea>
+                <button style="background-color:#53d769;" onclick="saveJournal()">Save Entry</button>
+                <div id="journalList" style="margin-top:10px;"></div>
+            </div>
 
-    <!-- changed this to a pomodoro timer instead of just 1 hour -->
-    <div class="timer-bar" id="pomoBg">
-        <div id="pomoLabel">🍅 Focus Time!</div>
-        <div id="timerText" style="font-size: 26px; font-weight: bold; margin: 5px 0;">25:00</div>
-        <button id="pomoBtn" onclick="startTimer()"
-            style="background-color: #1a1a2e; margin-top: 5px; width: 180px;">Start Pomodoro</button>
-    </div>
-
-    <div class="box">
-        <h2>👤 My Profile</h2>
-        <label>What class are you in?</label>
-        <select id="myClass" onchange="changeClass()">
-            <option value="Class 9">Class 9</option>
-            <option value="Class 10">Class 10</option>
-            <option value="Class 11">Class 11</option>
-            <option value="Class 12">Class 12</option>
-        </select>
-        <p id="welcomeMsg">Welcome, Student of Class 9!</p>
-    </div>
-
-    <div class="box">
-        <h2>📅 1h 30m Study Plan</h2>
-        <p style="font-size: 13px; color: #888; margin-top: -10px;">my rough time table for subjects & assignments</p>
-
-        <div class="backlog-item" style="border-left-color: #53d769;">
-            <b>First 30 mins:</b> Hard Subject (Math/Science)
-        </div>
-        <div class="backlog-item" style="border-left-color: #fca311;">
-            <b>Next 30 mins:</b> Pending Assignments
-        </div>
-        <div class="backlog-item" style="border-left-color: #e94560;">
-            <b>Last 30 mins:</b> Easy Subject / Revision
-        </div>
-
-        <div style="font-size: 12px; color: #ccc; margin-top: 10px; font-style: italic;">
-            * tbh i rarely stick to this perfectly lol
-        </div>
-    </div>
-
-    <div class="box">
-        <h2>📚 My Backlogs</h2>
-        <input type="text" id="taskInput" placeholder="What did you miss? (e.g. Science Ch 3)">
-        <button onclick="addTask()">Add to List</button>
-        <div id="taskList"></div>
-        <p id="taskSaved" class="saved-msg"></p>
-    </div>
-
-    <div class="box">
-        <h2>✍️ Daily Journal</h2>
-        <textarea id="journalInput" rows="3" placeholder="How was your day?"></textarea>
-        <button style="background-color:#53d769;" onclick="saveJournal()">Save Entry</button>
-        <div id="journalList" style="margin-top:10px;"></div>
-    </div>
-    
         </div> <!-- end of left side -->
-
         <!-- right side (calendar) -->
         <div style="flex: 1; min-width: 250px;">
             <div class="box">
@@ -188,10 +180,17 @@
                 <div id="calContainer"></div>
                 <button onclick="saveCal()" style="background-color:#fca311; margin-top:10px;">Save Week</button>
             </div>
+            <!-- aesthetic note of the day -->
+            <div class="box"
+                style="background: linear-gradient(135deg, #16213e, #1a1a2e); border: 2px dashed #e94560; text-align: center;">
+                <h2 style="color: #e94560; font-size: 16px; margin-bottom: 5px;">✨ Note of the Day</h2>
+                <textarea id="noteOfDay" oninput="saveNote()" placeholder="Write a nice quote here..."
+                    style="background: transparent; border: none; color: #fff; font-family: 'Caveat', cursive; font-size: 24px; text-align: center; resize: none; width: 100%; padding: 0; margin-top: 10px; outline: none; box-shadow: none;"
+                    rows="3"></textarea>
+            </div>
         </div>
-        
-    </div> <!-- end of flex wrapper -->
 
+    </div> <!-- end of flex wrapper -->
     <script>
         // ---- pomodoro timer ----
         // trying to do 25 mins focus, 5 mins break
@@ -199,27 +198,21 @@
         var isRunning = false;
         var isBreak = false;
         var timerObj;
-
         function startTimer() {
             if (isRunning == true) {
                 // i wanted a pause button but it was getting way too confusing 
                 // to pause and resume so it just ignores clicks if running lol
                 return;
             }
-
             isRunning = true;
             document.getElementById('pomoBtn').innerText = "Running...";
-
             timerObj = setInterval(function () {
                 var m = Math.floor(timeLeft / 60);
                 var s = timeLeft % 60;
-
                 // fixing the zero padding thing again
                 var pad = "";
                 if (s < 10) pad = "0";
-
                 document.getElementById('timerText').innerText = m + ":" + pad + s;
-
                 if (timeLeft > 0) {
                     timeLeft = timeLeft - 1;
                 } else {
@@ -236,7 +229,6 @@
                         timeLeft = 25 * 60;
                         document.getElementById('pomoLabel').innerText = "🍅 Focus Time!";
                         document.getElementById('pomoBg').style.background = "#e94560"; // back to red
-
                         // stop it so they have to click start again for next round
                         clearInterval(timerObj);
                         isRunning = false;
@@ -245,14 +237,12 @@
                 }
             }, 1000);
         }
-
         // ---- class picker ----
         function changeClass() {
             var c = document.getElementById('myClass').value;
             document.getElementById('welcomeMsg').innerText = "Welcome, Student of " + c + "!";
             localStorage.setItem("myClass", c);
         }
-
         // ---- backlog stuff ----
         function addTask() {
             var inp = document.getElementById('taskInput');
@@ -271,10 +261,8 @@
             }
             arr.push(val);
             localStorage.setItem("tasks", JSON.stringify(arr));
-
             inp.value = "";
             renderTasks();
-
             // little confirmation
             document.getElementById('taskSaved').innerText = "✓ Saved!";
             // clear message after bit
@@ -282,12 +270,10 @@
                 document.getElementById('taskSaved').innerText = "";
             }, 1500);
         }
-
         function renderTasks() {
             var arr = localStorage.getItem("tasks");
             if (arr == null) arr = [];
             else arr = JSON.parse(arr);
-
             var out = "";
             // loop thru and build html string
             for (var i = 0; i < arr.length; i++) {
@@ -295,34 +281,27 @@
             }
             document.getElementById('taskList').innerHTML = out;
         }
-
         // ---- journal ----
         function saveJournal() {
             var box = document.getElementById('journalInput');
             var txt = box.value;
             if (txt == "") return // dont save empty
-
             var saved = localStorage.getItem("journal");
             if (saved == null) saved = [];
             else saved = JSON.parse(saved);
-
             // date stuff
             var d = new Date();
             var dateStr = d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
             // console.log(dateStr); // was using this to debug
-
             saved.push({ date: dateStr, text: txt });
             localStorage.setItem("journal", JSON.stringify(saved));
-
             box.value = "";
             renderJournal();
         }
-
         function renderJournal() {
             var saved = localStorage.getItem("journal");
             if (saved == null) saved = [];
             else saved = JSON.parse(saved);
-
             var out = "";
             // newest first
             for (var i = saved.length - 1; i >= 0; i--) {
@@ -330,7 +309,6 @@
             }
             document.getElementById('journalList').innerHTML = out;
         }
-
         // ---- load stuff on page open ----
         // figured out i need to call these here otherwise nothing shows up lol
         var sc = localStorage.getItem("myClass");
@@ -340,15 +318,14 @@
         }
         // ---- custom calendar stuff ----
         var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-        
+
         function renderCal() {
             var savedCal = localStorage.getItem("myCal");
             if (savedCal != null) {
                 savedCal = JSON.parse(savedCal);
             } else {
-                savedCal = ["","","","","","",""]; // empty for 7 days
+                savedCal = ["", "", "", "", "", "", ""]; // empty for 7 days
             }
-
             var html = "";
             for (var i = 0; i < days.length; i++) {
                 html += "<div style='margin-bottom: 8px;'>";
@@ -358,7 +335,6 @@
             }
             document.getElementById('calContainer').innerHTML = html;
         }
-
         function saveCal() {
             var newCal = [];
             for (var i = 0; i < days.length; i++) {
@@ -368,10 +344,19 @@
             localStorage.setItem("myCal", JSON.stringify(newCal));
             alert("Calendar saved!");
         }
-
+        // ---- note of the day ----
+        function saveNote() {
+            localStorage.setItem("myNote", document.getElementById('noteOfDay').value);
+        }
         renderTasks();
-        renderJournal(); 
+        renderJournal();
         renderCal();
+        // load note
+        var sn = localStorage.getItem("myNote");
+        if (sn != null) {
+            document.getElementById('noteOfDay').value = sn;
+        }
     </script>
 </body>
-</html>    
+
+</html>
