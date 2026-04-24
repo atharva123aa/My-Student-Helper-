@@ -118,6 +118,12 @@
     <h1>📖 My Student Helper</h1>
     <p class="subtitle">a small tool i made to track my study stuff</p>
 
+    <!-- wrap everything so calendar can go on the side, finally learned flexbox lol -->
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; margin: 0 auto;">
+        
+        <!-- left side stuff -->
+        <div style="flex: 2; min-width: 300px;">
+
     <!-- changed this to a pomodoro timer instead of just 1 hour -->
     <div class="timer-bar" id="pomoBg">
         <div id="pomoLabel">🍅 Focus Time!</div>
@@ -139,6 +145,25 @@
     </div>
 
     <div class="box">
+        <h2>📅 1h 30m Study Plan</h2>
+        <p style="font-size: 13px; color: #888; margin-top: -10px;">my rough time table for subjects & assignments</p>
+
+        <div class="backlog-item" style="border-left-color: #53d769;">
+            <b>First 30 mins:</b> Hard Subject (Math/Science)
+        </div>
+        <div class="backlog-item" style="border-left-color: #fca311;">
+            <b>Next 30 mins:</b> Pending Assignments
+        </div>
+        <div class="backlog-item" style="border-left-color: #e94560;">
+            <b>Last 30 mins:</b> Easy Subject / Revision
+        </div>
+
+        <div style="font-size: 12px; color: #ccc; margin-top: 10px; font-style: italic;">
+            * tbh i rarely stick to this perfectly lol
+        </div>
+    </div>
+
+    <div class="box">
         <h2>📚 My Backlogs</h2>
         <input type="text" id="taskInput" placeholder="What did you miss? (e.g. Science Ch 3)">
         <button onclick="addTask()">Add to List</button>
@@ -152,6 +177,20 @@
         <button style="background-color:#53d769;" onclick="saveJournal()">Save Entry</button>
         <div id="journalList" style="margin-top:10px;"></div>
     </div>
+    
+        </div> <!-- end of left side -->
+
+        <!-- right side (calendar) -->
+        <div style="flex: 1; min-width: 250px;">
+            <div class="box">
+                <h2>🗓️ Weekly Calendar</h2>
+                <p style="font-size: 12px; color: #888; margin-top: -10px;">customizable plan for the week</p>
+                <div id="calContainer"></div>
+                <button onclick="saveCal()" style="background-color:#fca311; margin-top:10px;">Save Week</button>
+            </div>
+        </div>
+        
+    </div> <!-- end of flex wrapper -->
 
     <script>
         // ---- pomodoro timer ----
@@ -298,9 +337,41 @@
         if (sc != null) {
             document.getElementById('myClass').value = sc;
             document.getElementById('welcomeMsg').innerText = "Welcome, Student of " + sc + "!";
-        }   
+        }
+        // ---- custom calendar stuff ----
+        var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        
+        function renderCal() {
+            var savedCal = localStorage.getItem("myCal");
+            if (savedCal != null) {
+                savedCal = JSON.parse(savedCal);
+            } else {
+                savedCal = ["","","","","","",""]; // empty for 7 days
+            }
+
+            var html = "";
+            for (var i = 0; i < days.length; i++) {
+                html += "<div style='margin-bottom: 8px;'>";
+                html += "<b style='color:#e94560; font-size: 14px; display:inline-block; width: 40px;'>" + days[i] + "</b>";
+                html += "<input type='text' id='calInp" + i + "' value='" + savedCal[i] + "' placeholder='What to do?' style='padding: 5px; margin-top: 2px; width: calc(100% - 50px);'>";
+                html += "</div>";
+            }
+            document.getElementById('calContainer').innerHTML = html;
+        }
+
+        function saveCal() {
+            var newCal = [];
+            for (var i = 0; i < days.length; i++) {
+                var val = document.getElementById("calInp" + i).value;
+                newCal.push(val);
+            }
+            localStorage.setItem("myCal", JSON.stringify(newCal));
+            alert("Calendar saved!");
+        }
+
         renderTasks();
-        renderJournal();
-</script> 
-</body>       
-</html>                               
+        renderJournal(); 
+        renderCal();
+    </script>
+</body>
+</html>    
