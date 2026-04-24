@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Student Helper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* dark theme looked cooler so i went with this */
+        body {
+            background-color: #1a1a2e;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            color: #eee;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e94560;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        /* the card things */
+        .box {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 18px;
+            border: 1px solid #0f3460;
+        }
+
+        .box h2 {
+            color: #e94560;
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .timer-bar {
+            background: #e94560;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 17px;
+        }
+
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* forgot to add hover at first lol */
+        button:hover {
+            background-color: #c73652;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            box-sizing: border-box;
+            /* this fixed the overflow issue */
+            background: #1a1a2e;
+            color: #eee;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .backlog-item {
+            background: #0f3460;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border-left: 4px solid #e94560;
+            font-size: 14px;
+        }
+
+        .saved-msg {
+            color: #53d769;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .journal-entry {
+            background: #0f3460;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📖 My Student Helper</h1>
+    <p class="subtitle">a small tool i made to track my study stuff</p>
+
+    <div class="timer-bar">
+        ⏰ Study Time Left: <span id="timerText">60:00</span>
+    </div>
+
+    <div class="box">
+        <h2>👤 My Profile</h2>
+        <label>What class are you in?</label>
+        <select id="myClass" onchange="changeClass()">
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+        </select>
+        <p id="welcomeMsg">Welcome, Student of Class 9!</p>
+    </div>
+
+    <div class="box">
+        <h2>📚 My Backlogs</h2>
+        <input type="text" id="taskInput" placeholder="What did you miss? (e.g. Science Ch 3)">
+        <button onclick="addTask()">Add to List</button>
+        <div id="taskList"></div>
+        <p id="taskSaved" class="saved-msg"></p>
+    </div>
+
+    <div class="box">
+        <h2>✍️ Daily Journal</h2>
+        <textarea id="journalInput" rows="3" placeholder="How was your day?"></textarea>
+        <button style="background-color:#53d769;" onclick="saveJournal()">Save Entry</button>
+        <div id="journalList" style="margin-top:10px;"></div>
+    </div>
+
+    <script>
+        // ---- timer ----
+        var secs = 3600; // 60 min in seconds
+        var clockEl = document.getElementById('timerText');
+
+        setInterval(function () {
+            var m = Math.floor(secs / 60);
+            var s = secs % 60;
+            // i kept getting 9:7 instead of 09:07 so this fixes it
+            var pad = "";
+            if (s < 10) pad = "0";
+            clockEl.innerText = m + ":" + pad + s;
+            if (secs > 0) secs--;
+        }, 1000);
+
+        // ---- class picker ----
+        function changeClass() {
+            var c = document.getElementById('myClass').value;
+            document.getElementById('welcomeMsg').innerText = "Welcome, Student of " + c + "!";
+            localStorage.setItem("myClass", c);
+        }
+
+        // ---- backlog stuff ----
+        function addTask() {
+            var inp = document.getElementById('taskInput');
+            var val = inp.value;
+            if (val == "") {
+                alert("Type something first!");
+                return
+            }
+            // i tried this first but it didnt work
+            // pull old tasks from storage, or empty array if nothing there
+            var arr = localStorage.getItem("tasks");
+            if (arr == null) {
+                arr = [];
+            } else {
+                arr = JSON.parse(arr);
+            }
+            arr.push(val);
+            localStorage.setItem("tasks", JSON.stringify(arr));
+
+            inp.value = "";
+            renderTasks();
+
+            // little confirmation
+            document.getElementById('taskSaved').innerText = "✓ Saved!";
+            // clear message after bit
+            setTimeout(function () {
+                document.getElementById('taskSaved').innerText = "";
+            }, 1500);
+        }
+
+        function renderTasks() {
+            var arr = localStorage.getItem("tasks");
+            if (arr == null) arr = [];
+            else arr = JSON.parse(arr);
+
+            var out = "";
+            // loop thru and build html string
+            for (var i = 0; i < arr.length; i++) {
+                out = out + "<div class='backlog-item'>📍 " + arr[i] + "</div>";
+            }
+            document.getElementById('taskList').innerHTML = out;
+        }
+
+        // ---- journal ----
+        function saveJournal() {
+            var box = document.getElementById('journalInput');
+            var txt = box.value;
+            if (txt == "") return // dont save empty
+
+            var saved = localStorage.getItem("journal");
+            if (saved == null) saved = [];
+            else saved = JSON.parse(saved);
+
+            // date stuff
+            var d = new Date();
+            var dateStr = d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+            // console.log(dateStr); // was using this to debug
+
+            saved.push({ date: dateStr, text: txt });
+            localStorage.setItem("journal", JSON.stringify(saved));
+
+            box.value = "";
+            renderJournal();
+        }
+
+        function renderJournal() {
+            var saved = localStorage.getItem("journal");
+            if (saved == null) saved = [];
+            else saved = JSON.parse(saved);
+
+            var out = "";
+            // newest first
+            for (var i = saved.length - 1; i >= 0; i--) {
+                out = out + "<div class='journal-entry'><b>" + saved[i].date + ":</b> " + saved[i].text + "</div>";
+            }
+            document.getElementById('journalList').innerHTML = out;
+        }
+
+        // ---- load stuff on page open ----
+        // figured out i need to call these here otherwise nothing shows up lol
+        var sc = localStorage.getItem("myClass");
+        if (sc != null) {
+            document.getElementById('myClass').value = sc;
+            document.getElementById('welcomeMsg').innerText = "Welcome, Student of " + sc + "!";
+        }
+        renderTasks();
+        renderJournal();
+    </script>
+</body>
+
+</html>
