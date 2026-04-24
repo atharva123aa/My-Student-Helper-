@@ -11,7 +11,7 @@
         body {
             background-color: #1a1a2e;
             font-family: 'Poppins', sans-serif;
-            padding: 20px; 
+            padding: 20px;
             color: #eee;
             margin: 0;
         }
@@ -118,8 +118,12 @@
     <h1>📖 My Student Helper</h1>
     <p class="subtitle">a small tool i made to track my study stuff</p>
 
-    <div class="timer-bar">
-        ⏰ Study Time Left: <span id="timerText">60:00</span>
+    <!-- changed this to a pomodoro timer instead of just 1 hour -->
+    <div class="timer-bar" id="pomoBg">
+        <div id="pomoLabel">🍅 Focus Time!</div>
+        <div id="timerText" style="font-size: 26px; font-weight: bold; margin: 5px 0;">25:00</div>
+        <button id="pomoBtn" onclick="startTimer()"
+            style="background-color: #1a1a2e; margin-top: 5px; width: 180px;">Start Pomodoro</button>
     </div>
 
     <div class="box">
@@ -150,19 +154,58 @@
     </div>
 
     <script>
-        // ---- timer ----
-        var secs = 3600; // 60 min in seconds
-        var clockEl = document.getElementById('timerText');
+        // ---- pomodoro timer ----
+        // trying to do 25 mins focus, 5 mins break
+        var timeLeft = 25 * 60;
+        var isRunning = false;
+        var isBreak = false;
+        var timerObj;
 
-        setInterval(function () {
-            var m = Math.floor(secs / 60);
-            var s = secs % 60;
-            // i kept getting 9:7 instead of 09:07 so this fixes it
-            var pad = "";
-            if (s < 10) pad = "0";
-            clockEl.innerText = m + ":" + pad + s;
-            if (secs > 0) secs--;
-        }, 1000);
+        function startTimer() {
+            if (isRunning == true) {
+                // i wanted a pause button but it was getting way too confusing 
+                // to pause and resume so it just ignores clicks if running lol
+                return;
+            }
+
+            isRunning = true;
+            document.getElementById('pomoBtn').innerText = "Running...";
+
+            timerObj = setInterval(function () {
+                var m = Math.floor(timeLeft / 60);
+                var s = timeLeft % 60;
+
+                // fixing the zero padding thing again
+                var pad = "";
+                if (s < 10) pad = "0";
+
+                document.getElementById('timerText').innerText = m + ":" + pad + s;
+
+                if (timeLeft > 0) {
+                    timeLeft = timeLeft - 1;
+                } else {
+                    // timer hit zero, need to switch modes
+                    if (isBreak == false) {
+                        alert("Time for a 5 minute break! You earned it.");
+                        isBreak = true;
+                        timeLeft = 5 * 60;
+                        document.getElementById('pomoLabel').innerText = "☕ Break Time!";
+                        document.getElementById('pomoBg').style.background = "#53d769"; // turn green for break
+                    } else {
+                        alert("Break over! Back to work.");
+                        isBreak = false;
+                        timeLeft = 25 * 60;
+                        document.getElementById('pomoLabel').innerText = "🍅 Focus Time!";
+                        document.getElementById('pomoBg').style.background = "#e94560"; // back to red
+
+                        // stop it so they have to click start again for next round
+                        clearInterval(timerObj);
+                        isRunning = false;
+                        document.getElementById('pomoBtn').innerText = "Start Pomodoro";
+                    }
+                }
+            }, 1000);
+        }
 
         // ---- class picker ----
         function changeClass() {
@@ -255,10 +298,9 @@
         if (sc != null) {
             document.getElementById('myClass').value = sc;
             document.getElementById('welcomeMsg').innerText = "Welcome, Student of " + sc + "!";
-        }
+        }   
         renderTasks();
         renderJournal();
-    </script>
-</body>
-
-</html>
+</script> 
+</body>       
+</html>                               
